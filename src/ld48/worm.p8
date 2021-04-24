@@ -288,10 +288,17 @@ function handle_level_collision()
   local x = worm.prev_x[1] + 1
   local y = worm.prev_y[1] + 1
 
-  if level.food[x] != nil and level.food[x][y] then
-    sfx(SFX.eat)
-    worm.length += 1
-    level.food[x][y] = false -- Food eaten
+  if level.food[x] != nil then
+    if level.food[x][y] then
+      sfx(SFX.eat)
+      worm.length += 1
+      level.food[x][y] = false -- Food eaten
+    elseif level.fire[x][y] and worm.invincible <= 0 then
+      sfx(SFX.hit)
+      worm.length -= 1
+      worm.invincible = 20
+      fx.flash_red = 20
+    end
   end  
 end
 
