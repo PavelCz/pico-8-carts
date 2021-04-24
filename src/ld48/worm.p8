@@ -19,7 +19,8 @@ CLR = {
 
 SFX = {
   hit = 0,
-  collide = 1
+  collide = 1,
+  eat = 2
 }
 
 -- SPECIAL GAME CALLBACKS --
@@ -38,6 +39,13 @@ function _init()
   fx = {
     flash_red = 0
   }
+
+  level = {
+    food = {},
+    fire = {}
+  }
+
+  init_level()
 end
 
 function _update()
@@ -55,6 +63,8 @@ function _update()
   move_worm()
 
   handle_self_collision()
+
+  handle_level_collision()
 
 end
 
@@ -94,6 +104,35 @@ function _draw()
 
 end
 -----
+
+function init_level()
+  for x=1,128 do
+    level.food[x] = {}
+    level.fire[x] = {}
+    for y=1,128 do
+      -- First set boolean vals
+      level.food[x][y] = false
+      level.fire[x][y] = false
+      -- Get pixel coordinates
+      local pix_x = x-1
+      local pix_y = y-1
+      local sprite_num = mget(flr(pix_x / 8), flr(pix_y / 8))
+      -- Determine cell location on the sprite sheet
+      local ss_cell_x = sprite_num % 16
+      local ss_cell_y = flr(sprite_num / 16)
+      -- Determine sprite sheet location
+      local ss_x = ss_cell_x * 8 + pix_x % 8
+      local ss_y = ss_cell_y * 8 + pix_y % 8
+      local color = sget(ss_x, ss_y)
+      -- Determine type of pixel based on color
+      if color == 3 or color == 11 then -- Greens
+        level.food[x][y] = true
+      elseif color == 8 or color == 9 or color == 10 then -- red, orange yellow
+        level.fire[x][y] = true
+      end
+    end
+  end  
+end
 
 function move_worm()
   local dx = 0
@@ -216,6 +255,18 @@ function handle_self_collision()
     end
   end
 end
+
+function handle_level_collision()
+  -- Convert integer worm position into indices
+  local x = worm.prev_x[1] + 1
+  local y = worm.prev_y[1] + 1
+
+  if level.food[x] != nil and level.food[x][y] then
+    sfx(SFX.eat)
+    worm.length += 1
+  end  
+end
+
 __gfx__
 000000000000000b15d5500000000000000555510000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000115150000000000000005d550000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -274,3 +325,4 @@ __map__
 __sfx__
 000c00002663019650146200c70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000e05019000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000002f55034550000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
