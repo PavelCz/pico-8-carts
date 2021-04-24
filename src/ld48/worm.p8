@@ -24,15 +24,24 @@ SFX = {
   eat = 2
 }
 
+level_text = {
+  -- Level 1
+  {
+    {x = 8, y = 20, text = "Wormy will grow from food"},
+    {x = 16, y = 40, text = "Wormy leaves cavities"},
+    {x = 6, y = 60, text = "Wormy will fall in cavities"}
+  }
+}
+
 -- SPECIAL GAME CALLBACKS --
 function _init()
   worm = {
-    x = 0,  -- The exact location. prev_x/y only save integer values
+    x = 5,  -- The exact location. prev_x/y only save integer values
     y = 0,
     dir = DIR.R,
     length = 10,
     speed = 0.5,
-    prev_x = {0},
+    prev_x = {5},
     prev_y = {0},
     invincible = 0,
     airtime = 0
@@ -43,6 +52,7 @@ function _init()
   }
 
   level = {
+    number = 1,
     food = {},
     fire = {},
     cavities = {}
@@ -79,6 +89,12 @@ function _draw()
 
   map(0,0,0,0,16,16,0x2)
 
+  -- Draw special level texts
+  for text in all(level_text[level.number]) do
+    local text_colour = 15
+    print(text.text, text.x, text.y, text_colour)
+  end
+
   -- Draw cavities
   for x=1,128 do
     for y=1,128 do
@@ -90,7 +106,7 @@ function _draw()
 
 
   map(0,0,0,0,16,16,0x4)
-  
+
   map(0,0,0,0,16,16,0x40)
 
   -- Draw worm head
@@ -114,7 +130,7 @@ function _draw()
   end
 
   -- Draw length
-  print("lENGTH: "..worm.length, 24, 4)
+  print("lENGTH: "..worm.length, 80, 0)
 
 end
 -----
