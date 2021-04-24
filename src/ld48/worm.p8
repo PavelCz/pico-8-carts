@@ -108,12 +108,22 @@ function update_worm_dir()
 
   for dir=0,3 do
     if btn(dir) then
-      worm.dir = dir
+      if dir != opposite(worm.dir) then -- Prevent worm 180° turn
+        worm.dir = dir
+        break
+      end
     end
   end
 
   handle_screen_collision()
 end
+
+function opposite(dir)
+  if (dir == 0) return 1
+  if (dir == 1) return 0
+  if (dir == 2) return 3
+  if (dir == 3) return 2
+end 
 
 -- Handle collisions, return true if collision is detected
 -- In case of a collision player input should be ignored
