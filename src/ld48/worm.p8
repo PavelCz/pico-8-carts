@@ -3,6 +3,18 @@ version 32
 __lua__
 -- Pico-8 cartridge for LD48
 
+---- TODOS for the jam ----
+-- Add final screen
+-- Level boundary that is more detailed (not necessarily the whole side)
+-- Flesh out levels with more text
+-- Make background in pico-8
+-- Pickup sfx
+-- Cosmetic background decorations
+-- Bugs: 
+--   worm fast speed gaps
+--   falling sound
+-- Food adds speed?
+
 -- Constants
 DIR = {  -- Directions correspond to the numbers for the arrow buttons
   L = 0,
@@ -36,6 +48,7 @@ level_text = {
 levels = {
   {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D},
   {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R},
+  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D},
   {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D},
 }
 
@@ -62,7 +75,8 @@ function _init()
     food = {},
     fire = {},
     cavities = {},
-    speed = {}
+    speed = {},
+    slowers = {}
   }
 
   digging_sound = false
@@ -164,12 +178,14 @@ function init_level()
     current_level.fire[x] = {}
     current_level.cavities[x] = {}
     current_level.speed[x] = {}
+    current_level.slowers[x] = {}
     for y=1,128 do
       -- First set boolean vals
       current_level.food[x][y] = false
       current_level.fire[x][y] = false
       current_level.cavities[x][y] = false
       current_level.speed[x][y] = false
+      current_level.slowers[x][y] = false
     
       -- Get current origin
       local orig_x = levels[current_level.number].origin_x
@@ -195,8 +211,10 @@ function init_level()
           current_level.fire[x][y] = true
         elseif color == 1 or color == 5 then
           current_level.cavities[x][y] = true
-        elseif color == 2 then
+        elseif color == 2 then -- Purple
           current_level.speed[x][y] = true
+        elseif color == 7 then -- White
+          current_level.slowers[x][y] = true
         end
       end
     end
@@ -408,8 +426,15 @@ function handle_level_collision()
       end
     elseif current_level.speed[x][y] then
       worm.speed += 0.1
+      current_level.speed[x][y] = false
       if worm.speed > 1.4 then
         worm.speed = 1.4
+      end
+    elseif current_level.slowers[x][y] then
+      worm.speed -= 0.05
+      current_level.slowers[x][y] = false
+      if worm.speed < 0.25 then
+        worm.speed = 0.25
       end
     elseif current_level.cavities[x][y] then -- There will never be a cavity under fire
       worm.airtime += worm.speed -- With airtime we don't count the number of frames we were in the air, but the number of pixels
