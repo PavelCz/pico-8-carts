@@ -179,22 +179,25 @@ function init_level()
       local pix_x = orig_x + x-1
       local pix_y = orig_y + y-1
       local sprite_num = mget(flr(pix_x / 8), flr(pix_y / 8))
+
+      if not fget(sprite_num, 0) then -- Sprites with this flag set are decorative
       -- Determine cell location on the sprite sheet
-      local ss_cell_x = sprite_num % 16
-      local ss_cell_y = flr(sprite_num / 16)
-      -- Determine sprite sheet location
-      local ss_x = ss_cell_x * 8 + pix_x % 8
-      local ss_y = ss_cell_y * 8 + pix_y % 8
-      local color = sget(ss_x, ss_y)
-      -- Determine type of pixel based on color
-      if color == 3 or color == 11 then -- Greens
-        current_level.food[x][y] = true
-      elseif color == 8 or color == 9 or color == 10 then -- red, orange yellow
-        current_level.fire[x][y] = true
-      elseif color == 1 or color == 5 then
-        current_level.cavities[x][y] = true
-      elseif color == 2 then
-        current_level.speed[x][y] = true
+        local ss_cell_x = sprite_num % 16
+        local ss_cell_y = flr(sprite_num / 16)
+        -- Determine sprite sheet location
+        local ss_x = ss_cell_x * 8 + pix_x % 8
+        local ss_y = ss_cell_y * 8 + pix_y % 8
+        local color = sget(ss_x, ss_y)
+        -- Determine type of pixel based on color
+        if color == 3 or color == 11 then -- Greens
+          current_level.food[x][y] = true
+        elseif color == 8 or color == 9 or color == 10 then -- red, orange yellow
+          current_level.fire[x][y] = true
+        elseif color == 1 or color == 5 then
+          current_level.cavities[x][y] = true
+        elseif color == 2 then
+          current_level.speed[x][y] = true
+        end
       end
     end
   end  
@@ -485,7 +488,7 @@ __gfx__
 00888888880000088888980000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000888800000088008880000000700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __gff__
-0002040004040404000000000000000040404040000404040000000000000000404040020004040400000000000000004040400200000000000000000000000004040404000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0002050005040404000000000000000040404040000404040000000000000000404040020004040400000000000000004040400200000000000000000000000004040404000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0200000000000000000000000000000402000000000000000000000000000004020000000000000000000000000000040200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
