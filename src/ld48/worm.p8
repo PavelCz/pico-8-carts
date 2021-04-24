@@ -14,7 +14,8 @@ DIR = {  -- Directions correspond to the numbers for the arrow buttons
 CLR = {
   back = 4,
   head = 14,
-  body = 15
+  body = 15,
+  cavity = 0
 }
 
 SFX = {
@@ -42,7 +43,8 @@ function _init()
 
   level = {
     food = {},
-    fire = {}
+    fire = {},
+    cavities = {}
   }
 
   init_level()
@@ -60,6 +62,8 @@ function _update()
 
   update_worm_dir()
 
+  update_cavities()
+
   move_worm()
 
   handle_self_collision()
@@ -75,6 +79,15 @@ function _draw()
   for x=0,15 do
     for y=0,15 do
       map(x,y,x * 8,y * 8,8,8)
+    end
+  end
+
+  -- Draw cavities
+  for x=1,128 do
+    for y=1,128 do
+      if level.cavities[x][y] then
+        pset(x, y, CLR.cavity)
+      end
     end
   end
   
@@ -109,10 +122,12 @@ function init_level()
   for x=1,128 do
     level.food[x] = {}
     level.fire[x] = {}
+    level.cavities[x] = {}
     for y=1,128 do
       -- First set boolean vals
       level.food[x][y] = false
       level.fire[x][y] = false
+      level.cavities[x][y] = false
       -- Get pixel coordinates
       local pix_x = x-1
       local pix_y = y-1
@@ -132,6 +147,14 @@ function init_level()
       end
     end
   end  
+end
+
+function update_cavities()
+  local x = worm.prev_x[worm.length]
+  local y = worm.prev_y[worm.length]
+  if x != nil and y != nil and level.cavities[x] != nil then
+    level.cavities[x][y] = true
+  end
 end
 
 function move_worm()
@@ -264,6 +287,7 @@ function handle_level_collision()
   if level.food[x] != nil and level.food[x][y] then
     sfx(SFX.eat)
     worm.length += 1
+    level.food[x][y] = false -- Food eaten
   end  
 end
 
