@@ -17,20 +17,30 @@ CLR = {
   body = 15
 }
 
+SFX = {
+  hit = 0,
+  colide = 1
+}
+
 -- SPECIAL GAME CALLBACKS --
 function _init()
   worm = {
     x = 0,  -- The exact location. prev_x/y only save integer values
     y = 0,
     dir = DIR.R,
-    length = 10,
+    length = 15,
     speed = 0.65,
     prev_x = {0},
-    prev_y = {0}
+    prev_y = {0},
+    invincible = 0
   }
 end
 
 function _update()
+  -- Misc Updates
+  if worm.invincible > 0 then
+    worm.invincible -= 1
+  end
 
   --collision = handle_screen_collision()
   --if not collision then
@@ -38,6 +48,8 @@ function _update()
   --end
 
   move_worm()
+
+  handle_self_collision()
 end
 
 function _draw()
@@ -154,4 +166,18 @@ function handle_screen_collision()
   end
 
   return false
+end
+
+function handle_self_collision()
+  if (worm.invincible > 0) return
+  
+  for i=2,worm.length do
+    -- prev_x/y[1] is position of head
+    if worm.prev_x[i] == worm.prev_x[1] and worm.prev_y[i] == worm.prev_y[1] then
+      sfx(SFX.hit)
+      worm.length -= 1 -- TODO: check for death
+      worm.invincible = 5 -- Grant short term invincibility, mostly to prevent more than one damage from self collisions
+      break
+    end
+  end
 end
