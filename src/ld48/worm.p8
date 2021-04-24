@@ -73,7 +73,7 @@ function _update()
     fx.flash_red -= 1
   end
 
-  if not digging_sound and worm.airtime <= 0 then
+  if not digging_sound and worm.airtime < 1 then
     digging_sound = true -- Toggle flag
     music(0, 200, 0x04) -- Start diggin sound "music"
   elseif digging_sound and worm.airtime >= 4 then
