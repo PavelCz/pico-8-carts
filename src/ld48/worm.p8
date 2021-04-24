@@ -24,7 +24,7 @@ function _init()
     y = 0,
     dir = DIR.R,
     length = 10,
-    speed = 0.3,
+    speed = 0.65,
     prev_x = {},
     prev_y = {}
   }
@@ -43,13 +43,13 @@ function _draw()
   -- Draw worm head
   local int_x = flr(worm.x) -- We floor our 
   local int_y = flr(worm.y)
-  rectfill(int_x,int_y,int_x+1, int_y+1,CLR.head)
+  rectfill(int_x,int_y,int_x, int_y,CLR.head)
   -- Draw worm body, index 1 is head
   for i=2,worm.length do
     local x = worm.prev_x[i]
     local y = worm.prev_y[i]
     if x != nil and y != nil then
-      rectfill(x,y,x+1, y+1,CLR.body)
+      rectfill(x,y,x, y,CLR.body)
     end
   end
 end
@@ -97,6 +97,22 @@ function move_worm()
     worm.prev_x[1] = int_x
     worm.prev_y[1] = int_y
   end
+
+  -- DETECT COLLISIONS
+  -- Collisions are handled by changing the direction clockwise
+  -- Left and right side collision
+  if worm.dir == DIR.L then
+    if worm.x < 0 then -- Check exact position
+      worm.x = 0
+      worm.dir = DIR.U
+    end
+  elseif worm.dir == DIR.R then
+    if worm.x > 127 then -- TODO: better alternative?
+      worm.x = 127
+      worm.dir = DIR.D
+    end
+  end
+
 end
 
 function update_worm_dir()
