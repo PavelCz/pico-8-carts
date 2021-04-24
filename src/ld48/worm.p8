@@ -120,7 +120,7 @@ function update_worm_dir()
 
   for dir=0,3 do
     if btn(dir) then
-      if dir != opposite(worm.dir) then -- Prevent worm 180° turn
+      if dir != opposite(worm.dir) then -- Prevent worm 180るぬ turn
         worm.dir = dir
         break
       end
@@ -181,3 +181,5 @@ function handle_self_collision()
     end
   end
 end
+__sfx__
+000c00002663019650146200c70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
