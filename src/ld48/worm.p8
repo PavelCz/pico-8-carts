@@ -30,8 +30,8 @@ function _init()
     x = 0,  -- The exact location. prev_x/y only save integer values
     y = 0,
     dir = DIR.R,
-    length = 20,
-    speed = 0.65,
+    length = 10,
+    speed = 0.5,
     prev_x = {0},
     prev_y = {0},
     invincible = 0
@@ -105,7 +105,7 @@ function _draw()
 
   -- Special effects
   if fx.flash_red > 0 then
-    if (fx.flash_red / 2) % 2 == 1 then
+    if (fx.flash_red / 4) % 2 == 1 then
       rectfill(0,0,128,128,8)
     end
   end
@@ -150,6 +150,12 @@ end
 function update_cavities()
   local x = worm.prev_x[worm.length]
   local y = worm.prev_y[worm.length]
+  if x != nil and y != nil and level.cavities[x] != nil then
+    level.cavities[x+1][y+1] = true
+  end
+  -- Doing this also for the second to last body part prevents gaps in case the length gets reduced
+  local x = worm.prev_x[worm.length-1]
+  local y = worm.prev_y[worm.length-1]
   if x != nil and y != nil and level.cavities[x] != nil then
     level.cavities[x+1][y+1] = true
   end
@@ -212,7 +218,7 @@ function update_worm_dir()
   end
 
   collision = handle_screen_collision()
-if (collision) sfx(SFX.collide)
+  if (collision) sfx(SFX.collide)
 
 end
 
@@ -271,7 +277,7 @@ function handle_self_collision()
       sfx(SFX.hit)
       worm.length -= 1 -- TODO: check for death
       worm.invincible = 20 -- Grant short term invincibility, mostly to prevent more than one damage from self collisions
-      fx.flash_red = 10 -- Flash screen red
+      fx.flash_red = 20 -- Flash screen red
       break
     end
   end
