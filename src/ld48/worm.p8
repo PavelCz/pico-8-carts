@@ -104,6 +104,17 @@ function move_worm()
 
 end
 
+function update_worm_dir()
+
+  for dir=0,3 do
+    if btn(dir) then
+      worm.dir = dir
+    end
+  end
+
+  handle_screen_collision()
+end
+
 -- Handle collisions, return true if collision is detected
 -- In case of a collision player input should be ignored
 function handle_screen_collision()
@@ -125,15 +136,4 @@ function handle_screen_collision()
   end
 
   return false
-end
-
-function update_worm_dir()
-
-  for dir=0,3 do
-    if btn(dir) then
-      worm.dir = dir
-    end
-  end
-
-  handle_screen_collision()
 end
