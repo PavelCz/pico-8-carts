@@ -25,13 +25,17 @@ function _init()
     dir = DIR.R,
     length = 10,
     speed = 0.65,
-    prev_x = {},
-    prev_y = {}
+    prev_x = {0},
+    prev_y = {0}
   }
 end
 
 function _update()
+
+  --collision = handle_screen_collision()
+  --if not collision then
   update_worm_dir()
+  --end
 
   move_worm()
 end
@@ -98,27 +102,38 @@ function move_worm()
     worm.prev_y[1] = int_y
   end
 
+end
+
+-- Handle collisions, return true if collision is detected
+-- In case of a collision player input should be ignored
+function handle_screen_collision()
   -- DETECT COLLISIONS
   -- Collisions are handled by changing the direction clockwise
   -- Left and right side collision
   if worm.dir == DIR.L then
-    if worm.x < 0 then -- Check exact position
-      worm.x = 0
+    if worm.prev_x[1] - 1 < 0 then -- Check exact position
+      -- worm.x = 0
       worm.dir = DIR.U
+      return true
     end
   elseif worm.dir == DIR.R then
-    if worm.x > 127 then -- TODO: better alternative?
-      worm.x = 127
+    if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
+      -- worm.x = 127
       worm.dir = DIR.D
+      return true
     end
   end
 
+  return false
 end
 
 function update_worm_dir()
+
   for dir=0,3 do
     if btn(dir) then
       worm.dir = dir
     end
   end
+
+  handle_screen_collision()
 end
