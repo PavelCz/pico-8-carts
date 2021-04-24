@@ -383,9 +383,9 @@ function handle_level_collision()
       -- The number of pixels the worm will fly horizontally before droppting, based on the speed
       local horizontal_duration = ceil(8 * worm.speed) -- TODO: floor or ceil?
       if flr(worm.airtime) > 0 and flr(worm.airtime) % horizontal_duration == 0 then
-        -- local fall_dist = worm.airtime / horizontal_duration -- The longer we are in the air, the longer we will fall
-        worm.y += 1
-        worm.prev_y[1] += 1
+        local fall_dist = worm.airtime / horizontal_duration -- The longer we are in the air, the longer we will fall
+        worm.y += fall_dist
+        worm.prev_y[1] += fall_dist
         -- In the case we are going upwards we grant short invincibility and turn around the worm, such that going up a hole will not cause extreme amounts of damage
         if worm.dir == DIR.U then
           worm.dir = DIR.D
