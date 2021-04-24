@@ -35,7 +35,7 @@ level_text = {
 
 levels = {
   {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D},
-  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.D},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R},
   {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D},
 }
 
@@ -343,6 +343,25 @@ function handle_screen_collision()
         worm.dir = DIR.L
         return false
       else 
+        worm.dir = DIR.L
+        return true
+      end
+    end
+  elseif worm.dir == DIR.U then
+    if worm.prev_y[1] - 1 < 0 then -- TODO: better alternative?
+      if levels[current_level.number].exit == DIR.U then -- This side is the exit
+        next_level()
+        return false
+      elseif worm.airtime > 1 then
+        worm.dir = DIR.D
+        return true
+      elseif btn(DIR.R) then
+        worm.dir = DIR.R
+        return false -- See above
+      elseif btn(DIR.L) then
+        worm.dir = DIR.L
+        return false
+      else 
         worm.dir = DIR.R
         return true
       end
@@ -386,8 +405,8 @@ function handle_level_collision()
       end
     elseif current_level.speed[x][y] then
       worm.speed += 0.1
-      if worm.speed > 1.5 then
-        worm.speed = 1.5
+      if worm.speed > 1.4 then
+        worm.speed = 1.4
       end
     elseif current_level.cavities[x][y] then -- There will never be a cavity under fire
       worm.airtime += worm.speed -- With airtime we don't count the number of frames we were in the air, but the number of pixels
@@ -411,6 +430,7 @@ function handle_level_collision()
 end
 
 function next_level()
+  local exit_dir = levels[current_level.number].exit
   current_level.number += 1
 
   digging_sound = false
@@ -420,7 +440,7 @@ function next_level()
   worm.y = levels[current_level.number].start_y
   worm.prev_x = {worm.x}
   worm.prev_y = {worm.y}
-  worm.dir = DIR.D
+  worm.dir = exit_dir
   worm.airtime = 0
   worm.invincible = 0
 
