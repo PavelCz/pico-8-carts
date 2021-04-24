@@ -129,18 +129,26 @@ end
 -- In case of a collision player input should be ignored
 function handle_screen_collision()
   -- DETECT COLLISIONS
-  -- Collisions are handled by changing the direction clockwise
+  -- Collisions are handled by changing the direction clockwise, unless the opposite arrow butt ins pressed
   -- Left and right side collision
   if worm.dir == DIR.L then
     if worm.prev_x[1] - 1 < 0 then -- Check exact position
       -- worm.x = 0
-      worm.dir = DIR.U
+      if btn(DIR.D) then
+        worm.dir = DIR.D
+      else 
+        worm.dir = DIR.U
+      end
       return true
     end
   elseif worm.dir == DIR.R then
     if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
       -- worm.x = 127
-      worm.dir = DIR.D
+      if btn(DIR.U) then
+        worm.dir = DIR.U
+      else 
+        worm.dir = DIR.D
+      end
       return true
     end
   end
