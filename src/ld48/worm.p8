@@ -19,7 +19,7 @@ CLR = {
 
 SFX = {
   hit = 0,
-  colide = 1
+  collide = 1
 }
 
 -- SPECIAL GAME CALLBACKS --
@@ -127,7 +127,9 @@ function update_worm_dir()
     end
   end
 
-  handle_screen_collision()
+  collision = handle_screen_collision()
+if (collision) sfx(SFX.collide)
+
 end
 
 function opposite(dir)
@@ -148,20 +150,28 @@ function handle_screen_collision()
       -- worm.x = 0
       if btn(DIR.D) then
         worm.dir = DIR.D
+        return false -- Does not count as actual collision (for sound's sake) because player chose direction
+      elseif btn(DIR.U) then
+        worm.dir = DIR.U
+        return false -- As above
       else 
         worm.dir = DIR.U
+        return true
       end
-      return true
     end
   elseif worm.dir == DIR.R then
     if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
       -- worm.x = 127
       if btn(DIR.U) then
         worm.dir = DIR.U
+        return false -- See above
+      elseif btn(DIR.D) then
+        worm.dir = DIR.D
+        return false
       else 
         worm.dir = DIR.D
+        return true
       end
-      return true
     end
   end
 
@@ -183,3 +193,4 @@ function handle_self_collision()
 end
 __sfx__
 000c00002663019650146200c70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000e05019000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
