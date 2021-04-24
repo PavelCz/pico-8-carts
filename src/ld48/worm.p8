@@ -28,8 +28,8 @@ level_text = {
   -- Level 1
   {
     {x = 8, y = 18, text = "food = growth\navoid hitting the tail"},
-    {x = 16, y = 40, text = "Wormy leaves cavities"},
-    {x = 6, y = 60, text = "Wormy will fall in cavities"}
+    {x = 16, y = 40, text = "wormy leaves cavities"},
+    {x = 6, y = 60, text = "wormy will fall in cavities"}
   }
 }
 
