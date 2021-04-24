@@ -61,7 +61,8 @@ function _init()
     number = 1,
     food = {},
     fire = {},
-    cavities = {}
+    cavities = {},
+    speed = {}
   }
 
   digging_sound = false
@@ -162,11 +163,13 @@ function init_level()
     current_level.food[x] = {}
     current_level.fire[x] = {}
     current_level.cavities[x] = {}
+    current_level.speed[x] = {}
     for y=1,128 do
       -- First set boolean vals
       current_level.food[x][y] = false
       current_level.fire[x][y] = false
       current_level.cavities[x][y] = false
+      current_level.speed[x][y] = false
     
       -- Get current origin
       local orig_x = levels[current_level.number].origin_x
@@ -190,6 +193,8 @@ function init_level()
         current_level.fire[x][y] = true
       elseif color == 1 or color == 5 then
         current_level.cavities[x][y] = true
+      elseif color == 2 then
+        current_level.speed[x][y] = true
       end
     end
   end  
@@ -378,6 +383,11 @@ function handle_level_collision()
         worm.length -= 1
         worm.invincible = 20
         fx.flash_red = 20
+      end
+    elseif current_level.speed[x][y] then
+      worm.speed += 0.1
+      if worm.speed > 1.5 then
+        worm.speed = 1.5
       end
     elseif current_level.cavities[x][y] then -- There will never be a cavity under fire
       worm.airtime += worm.speed -- With airtime we don't count the number of frames we were in the air, but the number of pixels
