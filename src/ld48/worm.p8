@@ -35,7 +35,8 @@ level_text = {
 
 levels = {
   {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D},
-  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.D},
+  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D},
 }
 
 -- SPECIAL GAME CALLBACKS --
@@ -108,7 +109,7 @@ function _draw()
   -- Clear the screen
   rectfill(0,0,128,128,CLR.back)
 
-  map(orig_x,column_y,0,0,16,16,0x2)
+  map(column_x,column_y,0,0,16,16,0x2)
 
   -- Draw special level texts
   for text in all(level_text[current_level.number]) do
@@ -126,9 +127,9 @@ function _draw()
   end
 
 
-  map(orig_x,column_y,0,0,16,16,0x4)
+  map(column_x,column_y,0,0,16,16,0x4)
 
-  map(orig_x,column_y,0,0,16,16,0x40)
+  map(column_x,column_y,0,0,16,16,0x40)
 
   -- Draw worm head
   local int_x = flr(worm.x) -- We floor our 
@@ -304,7 +305,7 @@ function handle_screen_collision()
       end
     end
   elseif worm.dir == DIR.R then
-    if worm.prev_x[1] + 1 > levels[current_level.number].origin_y + 127 then -- TODO: better alternative?
+    if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
       if levels[current_level.number].exit == DIR.R then -- This side is the exit
         next_level()
         return false
@@ -323,7 +324,7 @@ function handle_screen_collision()
       end
     end
   elseif worm.dir == DIR.D then
-    if worm.prev_y[1] + 1 > levels[current_level.number].origin_y + 127 then -- TODO: better alternative?
+    if worm.prev_y[1] + 1 > 127 then -- TODO: better alternative?
       if levels[current_level.number].exit == DIR.D then -- This side is the exit
         next_level()
         return false
@@ -409,7 +410,7 @@ function next_level()
   worm.y = levels[current_level.number].start_y
   worm.prev_x = {worm.x}
   worm.prev_y = {worm.y}
-  worm.dir = DIR.R
+  worm.dir = DIR.D
   worm.airtime = 0
   worm.invincible = 0
 
