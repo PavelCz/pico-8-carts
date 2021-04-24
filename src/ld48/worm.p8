@@ -76,11 +76,7 @@ function _draw()
   -- Clear the screen
   rectfill(0,0,128,128,CLR.back)
 
-  for x=0,15 do
-    for y=0,15 do
-      map(x,y,x * 8,y * 8,8,8)
-    end
-  end
+  map(0,0,0,0,16,16)
 
   -- Draw cavities
   for x=1,128 do
