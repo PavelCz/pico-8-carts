@@ -51,7 +51,7 @@ function _init()
     flash_red = 0
   }
 
-  level = {
+  current_level = {
     number = 1,
     food = {},
     fire = {},
@@ -100,7 +100,7 @@ function _draw()
   map(0,0,0,0,16,16,0x2)
 
   -- Draw special level texts
-  for text in all(level_text[level.number]) do
+  for text in all(level_text[current_level.number]) do
     local text_colour = 15
     print(text.text, text.x, text.y, text_colour)
   end
@@ -108,7 +108,7 @@ function _draw()
   -- Draw cavities
   for x=1,128 do
     for y=1,128 do
-      if level.cavities[x][y] then
+      if current_level.cavities[x][y] then
         pset(x-1, y-1, CLR.cavity)
       end
     end
@@ -147,14 +147,14 @@ end
 
 function init_level()
   for x=1,128 do
-    level.food[x] = {}
-    level.fire[x] = {}
-    level.cavities[x] = {}
+    current_level.food[x] = {}
+    current_level.fire[x] = {}
+    current_level.cavities[x] = {}
     for y=1,128 do
       -- First set boolean vals
-      level.food[x][y] = false
-      level.fire[x][y] = false
-      level.cavities[x][y] = false
+      current_level.food[x][y] = false
+      current_level.fire[x][y] = false
+      current_level.cavities[x][y] = false
       -- TODO: seperate between sprites with a game effect and purely decorative sprites based on flags
       -- Get pixel coordinates
       local pix_x = x-1
@@ -169,11 +169,11 @@ function init_level()
       local color = sget(ss_x, ss_y)
       -- Determine type of pixel based on color
       if color == 3 or color == 11 then -- Greens
-        level.food[x][y] = true
+        current_level.food[x][y] = true
       elseif color == 8 or color == 9 or color == 10 then -- red, orange yellow
-        level.fire[x][y] = true
+        current_level.fire[x][y] = true
       elseif color == 1 or color == 5 then
-        level.cavities[x][y] = true
+        current_level.cavities[x][y] = true
       end
     end
   end  
@@ -182,14 +182,14 @@ end
 function update_cavities()
   local x = worm.prev_x[worm.length]
   local y = worm.prev_y[worm.length]
-  if x != nil and y != nil and level.cavities[x] != nil then
-    level.cavities[x+1][y+1] = true
+  if x != nil and y != nil and current_level.cavities[x] != nil then
+    current_level.cavities[x+1][y+1] = true
   end
   -- Doing this also for the second to last body part prevents gaps in case the length gets reduced
   local x = worm.prev_x[worm.length-1]
   local y = worm.prev_y[worm.length-1]
-  if x != nil and y != nil and level.cavities[x] != nil then
-    level.cavities[x+1][y+1] = true
+  if x != nil and y != nil and current_level.cavities[x] != nil then
+    current_level.cavities[x+1][y+1] = true
   end
 end
 
@@ -325,19 +325,19 @@ function handle_level_collision()
   local x = worm.prev_x[1] + 1
   local y = worm.prev_y[1] + 1
 
-  if level.food[x] != nil then
-    if level.food[x][y] then
+  if current_level.food[x] != nil then
+    if current_level.food[x][y] then
       sfx(SFX.eat)
       worm.length += 1
-      level.food[x][y] = false -- Food eaten
-    elseif level.fire[x][y] then
+      current_level.food[x][y] = false -- Food eaten
+    elseif current_level.fire[x][y] then
       if worm.invincible <= 0 then
         sfx(SFX.hit)
         worm.length -= 1
         worm.invincible = 20
         fx.flash_red = 20
       end
-    elseif level.cavities[x][y] then -- There will never be a cavity under fire
+    elseif current_level.cavities[x][y] then -- There will never be a cavity under fire
       worm.airtime += worm.speed -- With airtime we don't count the number of frames we were in the air, but the number of pixels
       -- The number of pixels the worm will fly horizontally before droppting, based on the speed
       local horizontal_duration = ceil(8 * worm.speed) -- TODO: floor or ceil?
