@@ -99,10 +99,16 @@ function _update()
 end
 
 function _draw()
+
+  local orig_x = levels[current_level.number].origin_x
+  local orig_y = levels[current_level.number].origin_y
+  local column_x = orig_x / 8
+  local column_y = orig_y / 8
+
   -- Clear the screen
   rectfill(0,0,128,128,CLR.back)
 
-  map(0,0,0,0,16,16,0x2)
+  map(orig_x,column_y,0,0,16,16,0x2)
 
   -- Draw special level texts
   for text in all(level_text[current_level.number]) do
@@ -120,9 +126,9 @@ function _draw()
   end
 
 
-  map(0,0,0,0,16,16,0x4)
+  map(orig_x,column_y,0,0,16,16,0x4)
 
-  map(0,0,0,0,16,16,0x40)
+  map(orig_x,column_y,0,0,16,16,0x40)
 
   -- Draw worm head
   local int_x = flr(worm.x) -- We floor our 
@@ -160,10 +166,14 @@ function init_level()
       current_level.food[x][y] = false
       current_level.fire[x][y] = false
       current_level.cavities[x][y] = false
+    
+      -- Get current origin
+      local orig_x = levels[current_level.number].origin_x
+      local orig_y = levels[current_level.number].origin_y
       -- TODO: seperate between sprites with a game effect and purely decorative sprites based on flags
       -- Get pixel coordinates
-      local pix_x = x-1
-      local pix_y = y-1
+      local pix_x = orig_x + x-1
+      local pix_y = orig_y + y-1
       local sprite_num = mget(flr(pix_x / 8), flr(pix_y / 8))
       -- Determine cell location on the sprite sheet
       local ss_cell_x = sprite_num % 16
@@ -390,7 +400,24 @@ function handle_level_collision()
 end
 
 function next_level()
-  sfx(2)
+  current_level.number += 1
+
+  digging_sound = false
+
+  -- Reset worm
+  worm.x = levels[current_level.number].start_x
+  worm.y = levels[current_level.number].start_y
+  worm.prev_x = {worm.x}
+  worm.prev_y = {worm.y}
+  worm.dir = DIR.R
+  worm.airtime = 0
+  worm.invincible = 0
+
+  -- Set new camera position
+  -- camera(levels[current_level.number].origin_x, levels[current_level.number].origin_y)
+
+  init_level()
+  
 end
 
 __gfx__
