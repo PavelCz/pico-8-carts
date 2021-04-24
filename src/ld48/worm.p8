@@ -20,11 +20,13 @@ CLR = {
 -- SPECIAL GAME CALLBACKS --
 function _init()
   worm = {
-    x = 0,
+    x = 0,  -- The exact location. prev_x/y only save integer values
     y = 0,
     dir = DIR.R,
-    length = 4,
-    speed = 0.8
+    length = 10,
+    speed = 0.3,
+    prev_x = {},
+    prev_y = {}
   }
 end
 
@@ -38,8 +40,18 @@ function _draw()
   -- Clear the screen
   rectfill(0,0,128,128,CLR.back)
 
-  -- Draw worm
-  rectfill(worm.x,worm.y,worm.x+1, worm.y+1,CLR.head)
+  -- Draw worm head
+  local int_x = flr(worm.x) -- We floor our 
+  local int_y = flr(worm.y)
+  rectfill(int_x,int_y,int_x+1, int_y+1,CLR.head)
+  -- Draw worm body, index 1 is head
+  for i=2,worm.length do
+    local x = worm.prev_x[i]
+    local y = worm.prev_y[i]
+    if x != nil and y != nil then
+      rectfill(x,y,x+1, y+1,CLR.body)
+    end
+  end
 end
 -----
 
@@ -59,8 +71,32 @@ function move_worm()
   dx *= worm.speed
   dy *= worm.speed
 
+  -- Update worm head position
   worm.x += dx
   worm.y += dy
+
+  -- prev_x/y should only save previous tiles, i.e. integer positions
+  -- Therefore, we only update if we have an integer value change in x and y position
+  -- If we were to use exact locations for prev_x/y the worm would get shorter if it moves slower, as subsequent positions would be at e.g. 0.5,1,1.5
+  -- which would cause segments of the worm to overlap
+  local int_x = flr(worm.x)
+  local int_y = flr(worm.y)
+
+  if int_x != worm.prev_x[1] or int_y != worm.prev_y[1] then -- Check that the previous floored head position is not equal to the new one, i.e. we moved completely into a new tile
+    -- Update previous head positions
+    -- Because the last element will be overwritten we start at the second to last element
+    for i=worm.length-1,1,-1 do -- Go through elements from the back
+      -- Make sure the index exists
+      if worm.prev_x[i] != nil then
+        -- Shift all elements back
+        worm.prev_x[i+1] = worm.prev_x[i]
+        worm.prev_y[i+1] = worm.prev_y[i]
+      end
+    end
+    -- Set the head position to the first of the list
+    worm.prev_x[1] = int_x
+    worm.prev_y[1] = int_y
+  end
 end
 
 function update_worm_dir()
