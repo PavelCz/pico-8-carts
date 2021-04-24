@@ -34,7 +34,8 @@ function _init()
     speed = 0.5,
     prev_x = {0},
     prev_y = {0},
-    invincible = 0
+    invincible = 0,
+    airtime = 0
   }
 
   fx = {
@@ -207,12 +208,13 @@ function move_worm()
 end
 
 function update_worm_dir()
-
-  for dir=0,3 do
-    if btn(dir) then
-      if dir != opposite(worm.dir) then -- Prevent worm 180るぬ turn
-        worm.dir = dir
-        break
+  if worm.airtime <= 0 then
+    for dir=0,3 do
+      if btn(dir) then
+        if dir != opposite(worm.dir) then -- Prevent worm 180るぬ turn
+          worm.dir = dir
+          break
+        end
       end
     end
   end
@@ -237,8 +239,10 @@ function handle_screen_collision()
   -- Left and right side collision
   if worm.dir == DIR.L then
     if worm.prev_x[1] - 1 < 0 then -- Check exact position
-      -- worm.x = 0
-      if btn(DIR.D) then
+      if worm.airtime > 1 then
+        worm.dir = DIR.D
+        return true
+      elseif btn(DIR.D) then
         worm.dir = DIR.D
         return false -- Does not count as actual collision (for sound's sake) because player chose direction
       elseif btn(DIR.U) then
@@ -251,8 +255,10 @@ function handle_screen_collision()
     end
   elseif worm.dir == DIR.R then
     if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
-      -- worm.x = 127
-      if btn(DIR.U) then
+      if worm.airtime > 1 then
+        worm.dir = DIR.D
+        return true
+      elseif btn(DIR.U) then
         worm.dir = DIR.U
         return false -- See above
       elseif btn(DIR.D) then
@@ -293,11 +299,23 @@ function handle_level_collision()
       sfx(SFX.eat)
       worm.length += 1
       level.food[x][y] = false -- Food eaten
-    elseif level.fire[x][y] and worm.invincible <= 0 then
-      sfx(SFX.hit)
-      worm.length -= 1
-      worm.invincible = 20
-      fx.flash_red = 20
+    elseif level.fire[x][y] then
+      if worm.invincible <= 0 then
+        sfx(SFX.hit)
+        worm.length -= 1
+        worm.invincible = 20
+        fx.flash_red = 20
+      end
+    elseif level.cavities[x][y] then -- There will never be a cavity under fire
+      worm.airtime += 1
+      -- The number of pixels the worm will fly horizontally before droppting, based on the speed
+      local horizontal_duration = flr(8 * worm.speed) -- TODO: maybe floor our ceil?
+      if worm.airtime % horizontal_duration == 0 then
+        worm.y += 1
+        worm.prev_y[1] += 1
+      end
+    else -- Not in cavities
+      worm.airtime = 0
     end
   end  
 end
