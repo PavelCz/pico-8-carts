@@ -14,11 +14,12 @@ __lua__
 -- Final screen: Score
 -- Restart level or game button?
 -- Bugs: 
---   worm fast speed gaps
+--   fast worm speed gaps
 --   falling sound
 -- Food adds speed?
 -- Title screen?
 -- Better cartridge image
+-- More levels
 
 -- Constants
 DIR = {  -- Directions correspond to the numbers for the arrow buttons
