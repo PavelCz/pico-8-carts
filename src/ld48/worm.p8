@@ -33,6 +33,11 @@ level_text = {
   }
 }
 
+levels = {
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R},
+}
+
 -- SPECIAL GAME CALLBACKS --
 function _init()
   worm = {
@@ -269,7 +274,11 @@ function handle_screen_collision()
   -- Collisions are handled by changing the direction clockwise, unless the opposite arrow butt ins pressed
   -- Left and right side collision
   if worm.dir == DIR.L then
-    if worm.prev_x[1] - 1 < 0 then -- Check exact position
+    if worm.prev_x[1] - 1 < 0 then -- Check pixel position
+      if levels[current_level.number].exit == DIR.L then -- This side is the exit
+        next_level()
+        return false
+      end
       if worm.airtime > 1 then
         worm.dir = DIR.D
         return true
@@ -285,8 +294,11 @@ function handle_screen_collision()
       end
     end
   elseif worm.dir == DIR.R then
-    if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
-      if worm.airtime > 1 then
+    if worm.prev_x[1] + 1 > levels[current_level.number].origin_y + 127 then -- TODO: better alternative?
+      if levels[current_level.number].exit == DIR.R then -- This side is the exit
+        next_level()
+        return false
+      elseif worm.airtime > 1 then
         worm.dir = DIR.D
         return true
       elseif btn(DIR.U) then
@@ -297,6 +309,25 @@ function handle_screen_collision()
         return false
       else 
         worm.dir = DIR.D
+        return true
+      end
+    end
+  elseif worm.dir == DIR.D then
+    if worm.prev_y[1] + 1 > levels[current_level.number].origin_y + 127 then -- TODO: better alternative?
+      if levels[current_level.number].exit == DIR.D then -- This side is the exit
+        next_level()
+        return false
+      elseif worm.airtime > 1 then
+        worm.dir = DIR.R
+        return true
+      elseif btn(DIR.R) then
+        worm.dir = DIR.R
+        return false -- See above
+      elseif btn(DIR.L) then
+        worm.dir = DIR.L
+        return false
+      else 
+        worm.dir = DIR.R
         return true
       end
     end
@@ -356,6 +387,10 @@ function handle_level_collision()
       worm.airtime = 0
     end
   end  
+end
+
+function next_level()
+  sfx(2)
 end
 
 __gfx__
