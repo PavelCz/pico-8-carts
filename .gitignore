@@ -1,2 +1,5 @@
 /src/demos
 /.vscode
+*.html
+*.js
+*.zip
