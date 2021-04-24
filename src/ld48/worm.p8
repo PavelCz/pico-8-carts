@@ -82,7 +82,7 @@ function _draw()
   for x=1,128 do
     for y=1,128 do
       if level.cavities[x][y] then
-        pset(x, y, CLR.cavity)
+        pset(x-1, y-1, CLR.cavity)
       end
     end
   end
@@ -151,7 +151,7 @@ function update_cavities()
   local x = worm.prev_x[worm.length]
   local y = worm.prev_y[worm.length]
   if x != nil and y != nil and level.cavities[x] != nil then
-    level.cavities[x][y] = true
+    level.cavities[x+1][y+1] = true
   end
 end
 
