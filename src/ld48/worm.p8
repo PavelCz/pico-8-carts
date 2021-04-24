@@ -31,7 +31,7 @@ function _init()
     y = 0,
     dir = DIR.R,
     length = 10,
-    speed = 0.5,
+    speed = 0.3,
     prev_x = {0},
     prev_y = {0},
     invincible = 0,
@@ -307,12 +307,19 @@ function handle_level_collision()
         fx.flash_red = 20
       end
     elseif level.cavities[x][y] then -- There will never be a cavity under fire
-      worm.airtime += 1
+      worm.airtime += worm.speed -- With airtime we don't count the number of frames we were in the air, but the number of pixels
       -- The number of pixels the worm will fly horizontally before droppting, based on the speed
-      local horizontal_duration = flr(8 * worm.speed) -- TODO: maybe floor our ceil?
-      if worm.airtime % horizontal_duration == 0 then
+      local horizontal_duration = ceil(8 * worm.speed) -- TODO: floor or ceil?
+      if flr(worm.airtime) > 0 and flr(worm.airtime) % horizontal_duration == 0 then
+        -- local fall_dist = worm.airtime / horizontal_duration -- The longer we are in the air, the longer we will fall
         worm.y += 1
         worm.prev_y[1] += 1
+        -- In the case we are going upwards we grant short invincibility and turn around the worm, such that going up a hole will not cause extreme amounts of damage
+        if worm.dir == DIR.U then
+          worm.dir = DIR.D
+          worm.invincible = 15
+        end
+        -- TODO: make it so that falling down quickly doesn't cause gaps in the worm by pulling the tail with the
       end
     else -- Not in cavities
       worm.airtime = 0
