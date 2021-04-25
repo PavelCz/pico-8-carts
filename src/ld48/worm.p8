@@ -72,13 +72,13 @@ level_text = {
 }
 
 levels = {
-  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 72},
-  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R, exit_start = 0, exit_end = 96},
-  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 128},
-  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 128},
-  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 24},
-  {start_x = 5, start_y = 0, origin_x = 128 * 3, origin_y = 0, exit = DIR.D, exit_start = 90, exit_end = 128},
-  {start_x = 5, start_y = 0, origin_x = 128 * 3, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 128},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 72, hud_color = 7},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R, exit_start = 0, exit_end = 96, hud_color = 7},
+  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 128, hud_color = 7},
+  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 128, hud_color = 0},
+  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 24, hud_color = 0},
+  {start_x = 5, start_y = 0, origin_x = 128 * 3, origin_y = 0, exit = DIR.D, exit_start = 90, exit_end = 128, hud_color = 7},
+  {start_x = 5, start_y = 0, origin_x = 128 * 3, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 128, hud_color = 7},
   
   -- Last level = end game screen, has no exit
   {start_x = 5, start_y = 0, origin_x = 128, origin_y = 0, exit = -1, exit_start = 0, exit_end = 0},
@@ -250,6 +250,7 @@ function _draw()
     print("you reached the end", 24, 40, text_colour)
     print("score: "..(worm.length * 10).."\n\ngood job!", 44, 48, text_colour)
     print("thank you for playing my game", 6, 80, text_colour)
+    print("PRESS X TO RESTART", 22, 96, 7)
   end
 
   -- Draw cavities
@@ -289,8 +290,12 @@ function _draw()
     end
   end
 
-  -- Draw length
-  print("l "..current_level.number.."/"..#levels.." lENGTH: "..worm.length, 60, 0, 7)
+  -- Draw HUD
+  -- Set text color based on level
+  local hud_color = levels[current_level.number].hud_color
+  if current_level.number != #levels then
+    print("l "..current_level.number.."/"..(#levels-1).." lENGTH: "..worm.length, 60, 0, hud_color)
+  end
 
 end
 -----
@@ -628,7 +633,7 @@ function next_level()
   else  -- This is for when starting from the beginning
     -- exit_dir = DIR.D
   end
-  
+
   current_level.number += 1
 
   sfx(SFX.new_level)
