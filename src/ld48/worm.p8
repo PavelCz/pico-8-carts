@@ -4,11 +4,10 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Add failure states
+-- Add failure state
 -- Show current level number
 -- Flesh out levels with more text
 -- Make background music in pico-8
--- Pickup sfx
 -- Cosmetic background decorations
 -- Final screen: Score
 -- Restart level or game button?
