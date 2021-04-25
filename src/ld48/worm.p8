@@ -437,6 +437,8 @@ function move_worm()
   worm.x += dx
   worm.y += dy
 
+  -- UPDATE BODY/TAIL
+
   -- prev_x/y should only save previous tiles, i.e. integer positions
   -- Therefore, we only update if we have an integer value change in x and y position
   -- If we were to use exact locations for prev_x/y the worm would get shorter if it moves slower, as subsequent positions would be at e.g. 0.5,1,1.5
@@ -458,6 +460,32 @@ function move_worm()
     -- Set the head position to the first of the list
     worm.prev_x[1] = int_x
     worm.prev_y[1] = int_y
+
+    -- Sometimes we move more than one tile at high speeds
+    -- We want to prevent gaps in the worm
+    -- In a correct worm no part is more than one tile distance from the previous part
+    -- (Less than one if worm has corners)
+    -- Clean out any gaps in the updated data
+    for i=2,worm.length do
+      if worm.prev_x[i] != nil then
+        -- FIX X
+        local diff_x = worm.prev_x[i-1] - worm.prev_x[i]  -- closer to head - closer to end
+        -- Check that body is attached to previous part
+        if abs(diff_x) >= 2 then
+          -- Move closer to previous part
+          -- this should move such that they are only one apart
+          -- >_>  => >>
+          worm.prev_x[i] += (diff_x - sgn(diff_x))
+        end
+        -- FIX Y
+        local diff_y = worm.prev_y[i-1] - worm.prev_y[i]  -- closer to head - closer to end
+        -- Check that body is attached to previous part
+        if abs(diff_y) >= 2 then
+          -- Move closer to previous part
+          worm.prev_y[i] += (diff_y - sgn(diff_y))  -- this should move such that they are only one apart
+        end
+      end
+    end
   end
 
 end
