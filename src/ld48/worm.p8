@@ -91,6 +91,9 @@ sfx_channel = -1 -- Automatically choose available channel
 -- Other constants
 MAGMA_DAMAGE = 3
 
+-- Other variables
+wait = 0
+
 -- SPECIAL GAME CALLBACKS --
 function _init()
   worm = {
@@ -132,6 +135,13 @@ end
 
 function _update()
 
+  -- This allows to pause the game for some number of frames
+  if wait > 0 then
+    wait -= 1
+    return
+  end
+
+
   -- Restart level
   if btn(5) then -- X button
     if current_level.number == 0 then
@@ -139,6 +149,12 @@ function _update()
     elseif game_over or current_level.number == #levels then
       -- Start all the way from the beginning
       _init()
+      -- We wait here because when pressing the restart buttin it would often immediately start, because
+      -- the start game button is the same
+      -- Alternative solution, only start game when z + x is pressed. This would mean muting the music int
+      -- the main screen should probably be disabled, which is fine
+      wait = 15
+      return
     else
       -- Restart only the the current level
       restart_level()
