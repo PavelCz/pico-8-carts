@@ -138,7 +138,7 @@ function _update()
 
 
   -- Restart level
-  if btn(5) then -- X button
+  if btnp(5) then -- X button
     if current_level.number == 0 then
       next_level() -- Start at Level 1
     elseif game_over or current_level.number == #levels then
@@ -148,7 +148,7 @@ function _update()
       -- the start game button is the same
       -- Alternative solution, only start game when z + x is pressed. This would mean muting the music int
       -- the main screen should probably be disabled, which is fine
-      wait = 15
+      -- wait = 15 -- Should not be necessary anymore due to btn_p_
       return
     else
       -- Restart only the the current level
@@ -157,7 +157,7 @@ function _update()
   end
 
   -- Mute sound
-  if btn(4) then -- Z button
+  if btnp(4) then -- Z button
     mute = not mute
   end
 
