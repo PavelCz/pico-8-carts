@@ -4,14 +4,13 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Information when at max or min speed
 -- Last level fixups
--- Bugs: 
+-- Bugs that might or might not still exist: 
 --   fast worm speed gaps
---   falling sound
---   Topd of screen when there is cavity bug
+--   diggin sound randomly cuts out?- Seems to be fixed?
+--   Top of screen when there is cavity bug
 --   Hinder worm from going right in cavity in the one level
---   Edge case at the right edge of the screen?
+--   Edge case at the right edge of the screen in the corner?
 -- Better cartridge image
 
 ---- Potential future TODOS ----
@@ -100,7 +99,7 @@ function _init()
     y = 0,
     dir = DIR.R,
     length = 10,
-    speed = 1,--0.5,
+    speed = 0.5,
     prev_x = {5},
     prev_y = {0},
     invincible = 0,
@@ -337,7 +336,7 @@ function _draw()
   -- Set text color based on level
   local hud_color = levels[current_level.number].hud_color
   if current_level.number != #levels then
-    print("l "..current_level.number.."/"..(#levels-1).." lENGTH: "..worm.length, 60, 0, hud_color)
+    print("l"..current_level.number.."/"..(#levels-1).." lENGTH: "..worm.length, 60, 0, hud_color)
   end
 
 end
