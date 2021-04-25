@@ -142,6 +142,7 @@ function _update()
     if current_level.number == 0 then
       next_level() -- Start at Level 1
     elseif game_over or current_level.number == #levels then
+      sfx(SFX.dig, -2) -- disable any potential diggin sound
       -- Start all the way from the beginning
       _init()
       -- We wait here because when pressing the restart buttin it would often immediately start, because
