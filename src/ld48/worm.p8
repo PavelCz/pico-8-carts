@@ -46,7 +46,7 @@ SFX = {
 level_text = {
   -- Level 1
   {
-    {x = 8, y = 18, text = "food = growth\navoid hitting the tail"},
+    {x = 8, y = 18, text = "food = growth\navoid hitting your body"},
     {x = 16, y = 40, text = "wormy leaves cavities"},
     {x = 6, y = 60, text = "wormy will fall in cavities"}
   },
@@ -181,6 +181,12 @@ function _update()
       restart_level()
     end 
   end
+
+  -- Mute sound
+  if btn(4) then -- Z button
+    mute = not mute
+  end
+
 
 end
 
