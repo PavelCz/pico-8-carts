@@ -4,7 +4,6 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Sound when entering new level
 -- Cosmetic background decorations
 -- Restart level or game button?
 -- Bugs: 
@@ -175,7 +174,6 @@ function _draw()
   local column_x = orig_x / 8
   local column_y = orig_y / 8
 
-  -- Clear the screen
   if game_over then 
     cls()
     print("game over", 48, 32, 7)
@@ -183,10 +181,14 @@ function _draw()
     return
   end
 
+  -- Clear the screen
   rectfill(0,0,128,128,CLR.back)
+
+  -- FLAG 1 --
 
   map(column_x,column_y,0,0,16,16,0x2)
 
+  -- BETWEEN FLAG 1 and 2
   local text_colour = 15
   -- Draw special level texts
   for text in all(level_text[current_level.number]) do
@@ -209,8 +211,11 @@ function _draw()
     end
   end
 
+  -- FLAG 2 --
 
   map(column_x,column_y,0,0,16,16,0x4)
+
+  -- FLAG 6 --
 
   map(column_x,column_y,0,0,16,16,0x40)
 
