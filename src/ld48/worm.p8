@@ -105,6 +105,8 @@ function _init()
     slowers = {}
   }
 
+  game_over = false
+
   digging_sound = false
 
   init_level()
@@ -112,6 +114,11 @@ end
 
 function _update()
   -- Misc Updates
+  if worm.length < 1 then -- GAME OVER
+    game_over = true
+    return
+  end
+
   if worm.invincible > 0 then
     worm.invincible -= 1
   end
@@ -148,6 +155,13 @@ function _draw()
   local column_y = orig_y / 8
 
   -- Clear the screen
+  if game_over then 
+    cls()
+    print("game over", 48, 32, 7)
+    print("press x to restart", 32, 48, 7)
+    return
+  end
+
   rectfill(0,0,128,128,CLR.back)
 
   map(column_x,column_y,0,0,16,16,0x2)
@@ -450,7 +464,7 @@ function handle_level_collision()
     elseif current_level.fire[x][y] then
       if worm.invincible <= 0 then
         sfx(SFX.hit)
-        worm.length -= 1
+        worm.length -= 2 -- Magma damage
         worm.invincible = 20
         fx.flash_red = 20
       end
