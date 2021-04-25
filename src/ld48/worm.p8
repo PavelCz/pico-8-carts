@@ -81,7 +81,7 @@ levels = {
 
 -- Channel 1 and 2 for music
 dig_channel = 2
-sfx_channel = 3
+sfx_channel = -1 -- Automatically choose available channel
 
 -- SPECIAL GAME CALLBACKS --
 function _init()
@@ -138,6 +138,7 @@ function _update()
     worm.speed = 0
     worm.airtime = 0
     sfx(SFX.dig, -2) -- -2 disables sound
+    mute = true
     return
   end
 
