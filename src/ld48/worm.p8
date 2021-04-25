@@ -67,7 +67,7 @@ level_text = {
 levels = {
   {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 72},
   {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R, exit_start = 0, exit_end = 96},
-  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D}, exit_start = 0, exit_end = 128,
+  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D, exit_start = 0, exit_end = 128},
   {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 128},
   -- Last level = end game screen, has no exit
   {start_x = 5, start_y = 0, origin_x = 128, origin_y = 0, exit = -1, exit_start = 0, exit_end = 0},
