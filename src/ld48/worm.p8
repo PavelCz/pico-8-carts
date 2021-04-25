@@ -4,7 +4,6 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Add failure state music
 -- Show current level number
 -- Flesh out levels with more text
 -- Make background music in pico-8
