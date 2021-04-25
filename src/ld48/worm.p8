@@ -4,7 +4,6 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Show current level number
 -- Cosmetic background decorations
 -- Restart level or game button?
 -- Bugs: 
@@ -234,7 +233,7 @@ function _draw()
   end
 
   -- Draw length
-  print("lENGTH: "..worm.length, 80, 0, 7)
+  print("l "..current_level.number.."/"..#levels.." lENGTH: "..worm.length, 60, 0, 7)
 
 end
 -----
