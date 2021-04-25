@@ -5,10 +5,7 @@ __lua__
 
 ---- TODOS for the jam ----
 -- Show current level number
--- Flesh out levels with more text
--- Make background music in pico-8
 -- Cosmetic background decorations
--- Final screen: Score
 -- Restart level or game button?
 -- Bugs: 
 --   fast worm speed gaps
@@ -66,7 +63,7 @@ level_text = {
   },
   -- Level 5
   {
-    {x = 16, y = 40, text = "the end"},
+    --{x = 16, y = 40, text = "the end"},
   },
 }
 
@@ -189,10 +186,17 @@ function _draw()
 
   map(column_x,column_y,0,0,16,16,0x2)
 
+  local text_colour = 15
   -- Draw special level texts
   for text in all(level_text[current_level.number]) do
-    local text_colour = 15
     print(text.text, text.x, text.y, text_colour)
+  end
+
+  -- TEXT FOR END GAME SCREEN
+  if current_level.number == #levels then
+    print("you reached the end", 24, 40, text_colour)
+    print("score: "..(worm.length * 10).."\n\ngood job!", 44, 48, text_colour)
+    print("thank you for playing my game", 6, 80, text_colour)
   end
 
   -- Draw cavities
