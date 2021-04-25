@@ -4,9 +4,9 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Restart level or game button?
 -- Title screen?
 -- Make more difficult?
+-- Don't count end screen as level
 -- Bugs: 
 --   fast worm speed gaps
 --   falling sound
@@ -14,6 +14,8 @@ __lua__
 --   Hinder worm from going right in cavity in the one level
 --   Edge case at the right edge of the screen?
 -- Better cartridge image
+
+---- Potential future TODOS ----
 -- Food adds speed? -- Potential idae, I will not do it for now
 
 -- Constants
@@ -105,7 +107,7 @@ function _init()
   }
 
   current_level = {
-    number = 1,
+    number = 0, -- 0 is the title screen
     food = {},
     fire = {},
     cavities = {},
@@ -122,10 +124,30 @@ function _init()
 
   worm_starting_data = {}
 
-  init_level()
+  title_screen = true
 end
 
 function _update()
+
+  -- Restart level
+  if btn(5) then -- X button
+    if current_level.number == 0 then
+      next_level() -- Start at Level 1
+    elseif game_over or current_level.number == #levels then
+      -- Start all the way from the beginning
+      _init()
+    else
+      -- Restart only the the current level
+      restart_level()
+    end 
+  end
+
+  -- Mute sound
+  if btn(4) then -- Z button
+    mute = not mute
+  end
+
+
   if not music_playing and not mute then
     music(1, 200, 3)
     music_playing = true
@@ -133,6 +155,13 @@ function _update()
     music_playing = false
     music(-1)
   end
+  
+  -- If we are at the title screen ignore the rest of the update code
+  if current_level.number <= 0 then
+    return
+  end
+
+
   -- Misc Updates
   if worm.length < 1 then -- GAME OVER
     sfx(SFX.game_over, sfx_channel)
@@ -173,36 +202,34 @@ function _update()
 
   handle_level_collision()
 
-  -- Restart level
-  if btn(5) then -- X button
-    if current_level.number == #levels then
-      -- Go to the title screen
-    else
-      restart_level()
-    end 
-  end
-
-  -- Mute sound
-  if btn(4) then -- Z button
-    mute = not mute
-  end
-
-
 end
 
 function _draw()
 
-  local orig_x = levels[current_level.number].origin_x
-  local orig_y = levels[current_level.number].origin_y
-  local column_x = orig_x / 8
-  local column_y = orig_y / 8
-
+  -- Special screens
+  -- Title screen
+  if current_level.number == 0 then
+    rectfill(0,0,128,128,CLR.back)
+    print("wormy's", 32, 28, 15)
+    print("dangerous", 44, 35, 8)
+    print("Adventure", 56, 42, 15)
+    print("press x to start", 32, 64, 7)
+    return
+  end
+  -- Game over screen
   if game_over then 
     cls()
     print("game over", 48, 32, 7)
     print("press x to restart", 32, 48, 7)
     return
   end
+
+
+  local orig_x = levels[current_level.number].origin_x
+  local orig_y = levels[current_level.number].origin_y
+  local column_x = orig_x / 8
+  local column_y = orig_y / 8
+
 
   -- Clear the screen
   rectfill(0,0,128,128,CLR.back)
@@ -572,31 +599,37 @@ function handle_level_collision()
 end
 
 function next_level()
-  local exit_dir = levels[current_level.number].exit
-  current_level.number += 1
+  if current_level.number > 0 then -- Do this when going into the next level
+    local exit_dir = levels[current_level.number].exit
+  
 
-  digging_sound = false
+    digging_sound = false
 
-  -- Reset worm position
-  local save_x = worm.prev_x[1]
-  local save_y = worm.prev_y[1]
+    -- Reset worm position
+    local save_x = worm.prev_x[1]
+    local save_y = worm.prev_y[1]
 
-  if exit_dir == DIR.D then
-    worm.y -= 128
-    save_y -= 128
-  elseif exit_dir == DIR.U then
-    worm.y += 128
-    save_y += 128
-  elseif exit_dir == DIR.R then
-    worm.x -= 128
-    save_x -= 128
-  elseif exit_dir == DIR.L then
-    worm.x += 128
-    save_x += 128
+    if exit_dir == DIR.D then
+      worm.y -= 128
+      save_y -= 128
+    elseif exit_dir == DIR.U then
+      worm.y += 128
+      save_y += 128
+    elseif exit_dir == DIR.R then
+      worm.x -= 128
+      save_x -= 128
+    elseif exit_dir == DIR.L then
+      worm.x += 128
+      save_x += 128
+    end
+    -- Also reset the previous list, so they don't cause cavities on the oppisite side of the screen
+    worm.prev_x = {save_x}
+    worm.prev_y = {save_y}
+  else  -- This is for when starting from the beginning
+    -- exit_dir = DIR.D
   end
-  -- Also reset the previous list, so they don't cause cavities on the oppisite side of the screen
-  worm.prev_x = {save_x}
-  worm.prev_y = {save_y}
+  
+  current_level.number += 1
 
   sfx(SFX.new_level)
 
