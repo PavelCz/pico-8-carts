@@ -4,9 +4,9 @@ __lua__
 -- Pico-8 cartridge for LD48
 
 ---- TODOS for the jam ----
--- Title screen?
+-- Information when at max or min speed
 -- Make more difficult?
--- Don't count end screen as level
+-- Last level fixups
 -- Bugs: 
 --   fast worm speed gaps
 --   falling sound
@@ -87,6 +87,9 @@ levels = {
 -- Channel 1 and 2 for music
 dig_channel = 2
 sfx_channel = -1 -- Automatically choose available channel
+
+-- Other constants
+MAGMA_DAMAGE = 3
 
 -- SPECIAL GAME CALLBACKS --
 function _init()
@@ -564,13 +567,13 @@ function handle_level_collision()
     elseif current_level.fire[x][y] then
       if worm.invincible <= 0 then
         sfx(SFX.hit, sfx_channel)
-        worm.length -= 2 -- Magma damage
+        worm.length -= MAGMA_DAMAGE -- Magma damage
         worm.invincible = 20
         fx.flash_red = 20
       end
     elseif current_level.speed[x][y] then
       sfx(SFX.speed, sfx_channel)
-      worm.speed += 0.1
+      worm.speed += 0.05
       current_level.speed[x][y] = false
       if worm.speed > 1.4 then
         worm.speed = 1.4
