@@ -8,7 +8,7 @@ __lua__
 -- Show current level number
 -- Level boundary that is more detailed (not necessarily the whole side)
 -- Flesh out levels with more text
--- Make background in pico-8
+-- Make background music in pico-8
 -- Pickup sfx
 -- Cosmetic background decorations
 -- Final screen: Score
@@ -65,12 +65,12 @@ level_text = {
 }
 
 levels = {
-  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D},
-  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R},
-  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D},
-  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 72},
+  {start_x = 5, start_y = 0, origin_x = 0, origin_y = 128, exit = DIR.R, exit_start = 0, exit_end = 96},
+  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 128, exit = DIR.D}, exit_start = 0, exit_end = 128,
+  {start_x = 5, start_y = 0, origin_x = 128 * 2, origin_y = 0, exit = DIR.D, exit_start = 0, exit_end = 128},
   -- Last level = end game screen, has no exit
-  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 0, exit = -1},
+  {start_x = 5, start_y = 0, origin_x = 128, origin_y = 0, exit = -1, exit_start = 0, exit_end = 0},
 }
 
 -- SPECIAL GAME CALLBACKS --
@@ -333,7 +333,8 @@ function handle_screen_collision()
   -- Left and right side collision
   if worm.dir == DIR.L then
     if worm.prev_x[1] - 1 < 0 then -- Check pixel position
-      if levels[current_level.number].exit == DIR.L then -- This side is the exit
+      if levels[current_level.number].exit == DIR.L and worm.prev_y[1] >=  levels[current_level.number].exit_start
+      and worm.prev_y[1] <=  levels[current_level.number].exit_end then -- This side is the exit
         next_level()
         return false
       end
@@ -353,7 +354,8 @@ function handle_screen_collision()
     end
   elseif worm.dir == DIR.R then
     if worm.prev_x[1] + 1 > 127 then -- TODO: better alternative?
-      if levels[current_level.number].exit == DIR.R then -- This side is the exit
+      if levels[current_level.number].exit == DIR.R and worm.prev_y[1] >=  levels[current_level.number].exit_start
+      and worm.prev_y[1] <=  levels[current_level.number].exit_end then -- This side is the exit
         next_level()
         return false
       elseif worm.airtime > 1 then
@@ -372,7 +374,8 @@ function handle_screen_collision()
     end
   elseif worm.dir == DIR.D then
     if worm.prev_y[1] + 1 > 127 then -- TODO: better alternative?
-      if levels[current_level.number].exit == DIR.D then -- This side is the exit
+      if levels[current_level.number].exit == DIR.D and worm.prev_x[1] >=  levels[current_level.number].exit_start
+      and worm.prev_x[1] <=  levels[current_level.number].exit_end then -- This side is the exit
         next_level()
         return false
       elseif worm.airtime > 1 then
@@ -391,7 +394,8 @@ function handle_screen_collision()
     end
   elseif worm.dir == DIR.U then
     if worm.prev_y[1] - 1 < 0 then -- TODO: better alternative?
-      if levels[current_level.number].exit == DIR.U then -- This side is the exit
+      if levels[current_level.number].exit == DIR.U and worm.prev_x[1] >=  levels[current_level.number].exit_start
+      and worm.prev_x[1] <=  levels[current_level.number].exit_end then -- This side is the exit
         next_level()
         return false
       elseif worm.airtime > 1 then
