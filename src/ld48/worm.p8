@@ -488,17 +488,26 @@ function next_level()
 
   digging_sound = false
 
-  -- Reset worm
-  worm.x = levels[current_level.number].start_x
-  worm.y = levels[current_level.number].start_y
-  worm.prev_x = {worm.x}
-  worm.prev_y = {worm.y}
-  worm.dir = exit_dir
-  worm.airtime = 0
-  worm.invincible = 0
+  -- Reset worm position
+  local save_x = worm.prev_x[1]
+  local save_y = worm.prev_y[1]
 
-  -- Set new camera position
-  -- camera(levels[current_level.number].origin_x, levels[current_level.number].origin_y)
+  if exit_dir == DIR.D then
+    worm.y -= 128
+    save_y -= 128
+  elseif exit_dir == DIR.U then
+    worm.y += 128
+    save_y += 128
+  elseif exit_dir == DIR.R then
+    worm.x -= 128
+    save_x -= 128
+  elseif exit_dir == DIR.L then
+    worm.x += 128
+    save_x += 128
+  end
+  -- Also reset the previous list, so they don't cause cavities on the oppisite side of the screen
+  worm.prev_x = {save_x}
+  worm.prev_y = {save_y}
 
   init_level()
   
