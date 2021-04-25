@@ -53,9 +53,13 @@ level_text = {
   },
   -- Level 2
   {
+    {x = 6, y = 50, text = "you'll\nneed\nmore\nspeed"},
+    {x = 6, y = 112, text = "these will make you faster"},
   },
   -- Level 3
   {
+    {x = 48, y = 6, text = "      watch out!\ndon't hit the magma\n"},
+    {x = 27, y = 43, text = "these   will slow you"},
   },
   -- Level 3
   {
@@ -122,7 +126,7 @@ function _update()
     music(0, 200, 0x04) -- Start diggin sound "music"
   elseif digging_sound and worm.airtime >= 4 then
     digging_sound = false
-    music(1, 500, 0x04)
+    music(-1, 200, 0x04)
   end
 
   update_worm_dir()
@@ -190,7 +194,7 @@ function _draw()
   end
 
   -- Draw length
-  print("lENGTH: "..worm.length, 80, 0)
+  print("lENGTH: "..worm.length, 80, 0, 7)
 
 end
 -----
@@ -307,7 +311,7 @@ function update_worm_dir()
   if worm.airtime <= 0 then
     for dir=0,3 do
       if btn(dir) then
-        if dir != opposite(worm.dir) then -- Prevent worm 180るぬ turn
+        if dir != opposite(worm.dir) then -- Prevent worm 180 degree turn
           worm.dir = dir
           break
         end
@@ -596,5 +600,5 @@ b610000014720137201272011720107200f7200e7200d7200c7200b7200a72009720087200772006
 001e00000e75009750107000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __music__
 00 03424344
-00 04424344
+00 44424344
 
