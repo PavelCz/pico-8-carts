@@ -38,6 +38,7 @@ SFX = {
   hit = 0,
   collide = 1,
   eat = 2,
+  dig = 3,
   speed = 5,
   slow = 6,
   game_over = 7,
@@ -78,6 +79,10 @@ levels = {
   {start_x = 5, start_y = 0, origin_x = 128, origin_y = 0, exit = -1, exit_start = 0, exit_end = 0},
 }
 
+-- Channel 1 and 2 for music
+dig_channel = 2
+sfx_channel = 3
+
 -- SPECIAL GAME CALLBACKS --
 function _init()
   worm = {
@@ -109,22 +114,30 @@ function _init()
 
   digging_sound = false
 
-  music(1, 200, 12)
+  music_playing = false
+  mute = false
 
   init_level()
 end
 
 function _update()
+  if not music_playing and not mute then
+    music(1, 200, 3)
+    music_playing = true
+  elseif music_playing and mute then
+    music_playing = false
+    music(-1)
+  end
   -- Misc Updates
   if worm.length < 1 then -- GAME OVER
-    sfx(SFX.game_over)
+    sfx(SFX.game_over, sfx_channel)
     game_over = true
     worm.length = 100 -- So this doesn't get triggered again
     worm.x = 0
     worm.y = 0
     worm.speed = 0
     worm.airtime = 0
-    -- music(-1, 200, 2)
+    sfx(SFX.dig, -2) -- -2 disables sound
     return
   end
 
@@ -138,10 +151,10 @@ function _update()
 
   if not digging_sound and worm.airtime < 1 then
     digging_sound = true -- Toggle flag
-    -- music(0, 200, 2) -- Start diggin sound "music"
+    sfx(SFX.dig, dig_channel)
   elseif digging_sound and worm.airtime >= 4 then
     digging_sound = false
-    -- music(-1, 200, 2)
+    sfx(SFX.dig, -2) -- -2 disables sound
   end
 
   update_worm_dir()
@@ -342,7 +355,7 @@ function update_worm_dir()
   end
 
   collision = handle_screen_collision()
-  if (collision) sfx(SFX.collide)
+  if (collision) sfx(SFX.collide, sfx_channel)
 
 end
 
@@ -451,7 +464,7 @@ function handle_self_collision()
   for i=2,worm.length do
     -- prev_x/y[1] is position of head
     if worm.prev_x[i] == worm.prev_x[1] and worm.prev_y[i] == worm.prev_y[1] then
-      sfx(SFX.hit)
+      sfx(SFX.hit, sfx_channel)
       worm.length -= 1 -- TODO: check for death
       worm.invincible = 20 -- Grant short term invincibility, mostly to prevent more than one damage from self collisions
       fx.flash_red = 20 -- Flash screen red
@@ -467,25 +480,25 @@ function handle_level_collision()
 
   if current_level.food[x] != nil then
     if current_level.food[x][y] then
-      sfx(SFX.eat)
+      sfx(SFX.eat, sfx_channel)
       worm.length += 1
       current_level.food[x][y] = false -- Food eaten
     elseif current_level.fire[x][y] then
       if worm.invincible <= 0 then
-        sfx(SFX.hit)
+        sfx(SFX.hit, sfx_channel)
         worm.length -= 2 -- Magma damage
         worm.invincible = 20
         fx.flash_red = 20
       end
     elseif current_level.speed[x][y] then
-      sfx(SFX.speed)
+      sfx(SFX.speed, sfx_channel)
       worm.speed += 0.1
       current_level.speed[x][y] = false
       if worm.speed > 1.4 then
         worm.speed = 1.4
       end
     elseif current_level.slowers[x][y] then
-      sfx(SFX.slow)
+      sfx(SFX.slow, sfx_channel)
       worm.speed -= 0.05
       current_level.slowers[x][y] = false
       if worm.speed < 0.25 then
