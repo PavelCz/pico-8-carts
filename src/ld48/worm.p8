@@ -5,7 +5,6 @@ __lua__
 
 ---- TODOS for the jam ----
 -- Information when at max or min speed
--- Make more difficult?
 -- Last level fixups
 -- Bugs: 
 --   fast worm speed gaps
@@ -101,7 +100,7 @@ function _init()
     y = 0,
     dir = DIR.R,
     length = 10,
-    speed = 0.5,
+    speed = 1,--0.5,
     prev_x = {5},
     prev_y = {0},
     invincible = 0,
@@ -109,7 +108,9 @@ function _init()
   }
 
   fx = {
-    flash_red = 0
+    flash_red = 0,
+    max = 0,
+    min = 0
   }
 
   current_level = {
@@ -199,8 +200,15 @@ function _update()
     worm.invincible -= 1
   end
 
+  -- Update FX
   if fx.flash_red > 0 then
     fx.flash_red -= 1
+  end
+  if fx.max > 0 then
+    fx.max -= 1
+  end
+  if fx.min > 0 then
+    fx.min -= 1
   end
 
   if not digging_sound and worm.airtime < 1 then
@@ -306,6 +314,22 @@ function _draw()
   if fx.flash_red > 0 then
     if (fx.flash_red / 4) % 2 == 1 then
       rectfill(0,0,128,128,8)
+    end
+  end
+  if fx.max > 0 then
+    if fx.max > 30 then
+      rectfill(0,0,128,128,2)
+    end
+    if fx.max > 10 then
+      print("max speed", 50, 58, 7)
+    end
+  end
+  if fx.min > 0 then
+    if fx.min > 30 then
+      rectfill(0,0,128,128,7)
+    end
+    if fx.min > 10 then
+      print("min speed", 50, 58, 0)
     end
   end
 
@@ -593,6 +617,7 @@ function handle_level_collision()
       current_level.speed[x][y] = false
       if worm.speed > 1.4 then
         worm.speed = 1.4
+        if (fx.max <= 0) fx.max = 35
       end
     elseif current_level.slowers[x][y] then
       sfx(SFX.slow, sfx_channel)
@@ -600,6 +625,7 @@ function handle_level_collision()
       current_level.slowers[x][y] = false
       if worm.speed < 0.25 then
         worm.speed = 0.25
+        if (fx.min <= 0) fx.min = 35
       end
     elseif current_level.cavities[x][y] then -- There will never be a cavity under fire
       worm.airtime += worm.speed -- With airtime we don't count the number of frames we were in the air, but the number of pixels
